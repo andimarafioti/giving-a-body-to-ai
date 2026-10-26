@@ -1,0 +1,30 @@
+<!-- === SPEECH-TO-SPEECH: our open library, from one command to a voice agent on your laptop === -->
+<section data-keynote="keep" class="slide" data-id="s2s" aria-label="Our library: speech-to-speech">
+    <div class="head">
+        <div class="kicker reveal" style="--d:0">Open source</div>
+        <h2 class="reveal" style="--d:1">Our library: <span class="hl">speech-to-speech</span></h2>
+        <p class="lede reveal" style="--d:2">Build voice agents with open-source models. It runs entirely on your computer: no API key, no cloud service.</p>
+    </div>
+    <div class="s2s-term reveal" style="--d:3">
+        <div><span class="p">$</span>pip install speech-to-speech</div>
+        <div><span class="p">$</span>speech-to-speech local</div>
+        <div class="o">Loading models…</div>
+        <div class="ok">Ready — start speaking.</div>
+    </div>
+    <div class="s2s-pipe reveal" style="--d:4">
+        <div class="st"><div class="k">VAD</div><b>Silero VAD</b><span>2 backends</span></div>
+        <i>→</i>
+        <div class="st"><div class="k">STT</div><b>Parakeet TDT</b><span>14 backends</span></div>
+        <i>→</i>
+        <div class="st"><div class="k">LLM</div><b>Qwen3.5-4B</b><span>local or any API</span></div>
+        <i>→</i>
+        <div class="st"><div class="k">TTS</div><b>Qwen3-TTS</b><span>11 backends</span></div>
+    </div>
+    <p class="s2s-note reveal" style="--d:5">The defaults; every stage is swappable. It speaks the <b>OpenAI Realtime protocol</b>, so apps built for OpenAI’s API can point at your own machine. Apache 2.0.</p>
+    <div class="serve-stats s2s-stats">
+        <div class="reveal" style="--d:3"><div class="v">13.6k</div><div class="k">GitHub stars</div></div>
+        <div class="reveal" style="--d:4"><div class="v">#1</div><div class="k">repository of the day on GitHub</div></div>
+        <div class="reveal" style="--d:5"><div class="v">1000s</div><div class="k">of Reachy Minis talk through it</div></div>
+    </div>
+    <div class="chrome reveal" style="--d:8"><span><a class="gh" href="https://github.com/huggingface/speech-to-speech" target="_blank" rel="noopener">huggingface/speech-to-speech</a></span><span class="num"></span></div>
+</section>

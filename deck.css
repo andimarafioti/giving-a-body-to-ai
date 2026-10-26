@@ -647,3 +647,17 @@ body.notes-on #notesOverlay { display: block; position: fixed; left: 0; right: 0
 .about.me-about .bio .ed { padding: 2px 0 8px; }
 .about.me-about .bio .ed .t { display: block; }
 .about.me-about .bio .ed .w { display: block; font-size: 20px; color: var(--muted); margin-top: 2px; }
+/* speech-to-speech: the library, from one command to a voice agent */
+.s2s-term { position: absolute; left: var(--pad); top: 360px; width: 1130px; box-sizing: border-box; padding: 26px 34px; border-radius: 14px; border: 1px solid rgba(var(--paper-rgb), 0.18); background: rgba(0, 0, 0, 0.35); font-family: var(--font-mono); font-size: 30px; line-height: 1.6; color: var(--paper); }
+.s2s-term .p { color: var(--accent); margin-right: 18px; }
+.s2s-term .o { color: var(--muted); }
+.s2s-term .ok { color: #7fd6a8; }
+.s2s-pipe { position: absolute; left: var(--pad); top: 660px; width: 1130px; display: flex; align-items: center; gap: 14px; }
+.s2s-pipe .st { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 18px 20px; border-radius: 14px; border: 1px solid rgba(var(--paper-rgb), 0.3); background: rgba(var(--paper-rgb), 0.06); }
+.s2s-pipe .st .k { font-family: var(--font-mono); font-size: 18px; letter-spacing: 0.14em; color: var(--accent); }
+.s2s-pipe .st b { font-family: var(--font-body); font-weight: 600; font-size: 28px; }
+.s2s-pipe .st span { font-family: var(--font-mono); font-size: 16px; color: rgba(var(--paper-rgb), 0.72); }
+.s2s-pipe i { font-style: normal; font-size: 30px; color: rgba(var(--paper-rgb), 0.5); }
+.s2s-note { position: absolute; left: var(--pad); top: 830px; width: 1130px; font-size: 28px; line-height: 1.45; font-weight: 300; color: rgba(var(--paper-rgb), 0.85); }
+.s2s-note b { font-weight: 600; color: var(--paper); }
+.serve-stats.s2s-stats { top: 330px; }
