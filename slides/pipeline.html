@@ -1,0 +1,33 @@
+<!-- === 5.3 CONVERSATION APP: robot side + speech-to-speech backend === -->
+<section data-keynote="keep" class="slide" data-id="pipeline" aria-label="Conversation app">
+    <div class="head">
+        <div class="kicker reveal" style="--d:0">Flagship app</div>
+        <h2 class="reveal" style="--d:1">Conversation app</h2>
+    </div>
+    <div class="conv-left reveal" style="--d:2">
+        <h3>On Reachy Mini</h3>
+        <ul>
+            <li>A Python app that <b>forwards audio and images</b></li>
+            <li><b>MCP tools</b> fetch information from the web</li>
+            <li><b>Robot tools</b>: moves, emotions, camera image, start face tracking, sound volume, etc.</li>
+            <li>Talks to a <b>speech-to-speech</b> backend</li>
+        </ul>
+    </div>
+    <div class="pipe reveal" style="--d:3">
+        <div class="wave in"><i style="--j:0"></i><i style="--j:1"></i><i style="--j:2"></i><i style="--j:3"></i><i style="--j:4"></i></div>
+        <div class="node" style="--t:1.0s"><b>VAD</b><span>Silero + Smart Turn</span><em>CPU</em></div>
+        <div class="arrow"></div>
+        <div class="node" style="--t:1.6s"><b>STT</b><span>Qwen3-ASR</span><em>A10G</em></div>
+        <div class="arrow"></div>
+        <div class="node llm" style="--t:2.2s"><b>LLM</b><span>Gemma NVFP4</span><em>RTX Pro 6000</em><div class="node mcp" style="--t:2.8s"><b>MCP</b><span>web tools</span></div><div class="node mcp tools" style="--t:4.0s"><b>Robot tools</b><span>commands to the robot</span></div></div>
+        <div class="arrow"></div>
+        <div class="node" style="--t:4.0s"><b>TTS</b><span>Qwen3-TTS</span><em>A10G</em></div>
+        <div class="wave out"><i style="--j:0"></i><i style="--j:1"></i><i style="--j:2"></i><i style="--j:3"></i><i style="--j:4"></i></div>
+    </div>
+    <div class="talk reveal" style="--d:4">
+        <p class="q"><span class="tag">You</span>"Is it going to rain in Bordeaux today?"</p>
+        <p class="a"><span class="tag">Reachy</span>"No rain today. Enjoy the sun!"</p>
+    </div>
+    <p class="lat reveal" style="--d:5"><b>1.3 s</b> median from end of speech to first audio · 1.8k conversations a day</p>
+    <div class="chrome reveal" style="--d:6"><span>Backend: <a class="gh" href="https://github.com/huggingface/speech-to-speech" target="_blank" rel="noopener">huggingface/speech-to-speech</a></span><span class="num"></span></div>
+</section>

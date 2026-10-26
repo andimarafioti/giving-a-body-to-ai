@@ -1,0 +1,31 @@
+<!-- === 4.4 SOFTWARE STACK, then 4.5 SDK (REST + WebRTC) === -->
+<section data-keynote="cut" class="slide" data-id="stack" data-steps="1" aria-label="Software stack">
+    <div class="head">
+        <div class="kicker reveal" style="--d:0">Software</div>
+        <h2 class="reveal" style="--d:1"><span data-only="0">The stack</span></h2>
+        <h2 data-only="1" style="position:absolute; top:34px">The SDK</h2>
+    </div>
+    <div class="diagram">
+        <div class="layer" data-from="1">
+            <div class="tag">Your code</div>
+            <div class="boxes"><div class="box accent"><b>Local apps</b><span>same machine or local network</span></div><div class="box accent"><b>Remote apps</b><span>from anywhere, in a browser</span></div></div>
+        </div>
+        <div class="layer" data-from="1">
+            <div class="tag">SDK</div>
+            <div class="boxes"><div class="box accent"><b>REST API</b><span>HTTP · state, moves, apps</span></div><div class="box accent"><b>WebRTC</b><span>audio · video · data channel</span></div></div>
+        </div>
+        <div class="layer reveal" style="--d:3">
+            <div class="tag">Daemon</div>
+            <div class="boxes"><div class="box"><b>Python daemon</b><span>orchestrates the low-level stack · moves · apps · media</span></div></div>
+        </div>
+        <div class="layer reveal" style="--d:4">
+            <div class="tag">Low level</div>
+            <div class="boxes"><div class="box col1"><b>Rust</b><span>motor control · kinematics</span></div><div class="box"><b>GStreamer · Rust / C</b><span>camera · audio · WebRTC</span></div></div>
+        </div>
+        <div class="layer reveal" style="--d:5">
+            <div class="tag">Hardware</div>
+            <div class="boxes"><div class="box"><b>9 motors</b><span>Dynamixel</span></div><div class="box"><b>Camera</b><span>IMX708</span></div><div class="box"><b>Mics</b><span>XVF3800</span></div><div class="box"><b>Speaker</b><span>5 W</span></div></div>
+        </div>
+    </div>
+    <div class="chrome reveal" style="--d:8"><span><a class="gh" href="https://github.com/pollen-robotics/reachy_mini" target="_blank" rel="noopener">pollen-robotics/reachy_mini</a></span><span class="num"></span></div>
+</section>

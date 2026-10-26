@@ -1,0 +1,25 @@
+Giving a body to AI: live deck
+==============================
+
+Run it (no network needed once unzipped):
+
+    python3 serve.py
+
+then open http://localhost:8765/index.html in Chrome, and press F for fullscreen.
+Opening index.html straight from disk does not work: the deck fetches its slides and 3D models over HTTP.
+
+Keys
+    Right, Space, Page Down   next slide or step (clickers send these)
+    Left, Page Up             back
+    N                         speaker notes in a second window (allow the pop-up; drag it to your laptop screen)
+    K                         keynote mode on/off: skips the slides marked "Keynote: cut" in the notes
+    F                         fullscreen
+    Home / End                first / last slide
+
+#12 in the address bar jumps to slide 12, #8.2 to step 2 of slide 8.
+
+The robot is drawn live by the laptop's graphics chip. Any recent laptop is fine; plug it in, so the
+browser doesn't throttle the GPU on battery.
+
+3D scene, robot models and slide design come from Fabien Danieau's Reachy Mini deck
+(github.com/FabienDanieau/reachy_mini_intro, CC BY 4.0); see README.md for the model licences.

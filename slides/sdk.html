@@ -1,0 +1,37 @@
+<!-- === 5.1 API: Python and JavaScript === -->
+<section data-keynote="cut" class="slide" data-id="sdk" data-scene="api" data-steps="1" aria-label="Python and JavaScript SDKs">
+    <div class="head">
+        <div class="kicker reveal" style="--d:0">API</div>
+        <h2 class="reveal" style="--d:1">Python &amp; JavaScript</h2>
+    </div>
+    <div class="cols api">
+        <div class="col py" data-only="0">
+            <h3>Python</h3>
+            <p><b>Autonomous apps</b>, running on the robot with direct access to the camera and the microphones. Example: the conversation app.</p>
+<pre class="code install"><span class="c">$</span> pip install reachy_mini</pre>
+<pre class="code"><span class="k">from</span> reachy_mini <span class="k">import</span> ReachyMini
+<span class="k">from</span> reachy_mini.utils <span class="k">import</span> create_head_pose
+
+<span class="k">with</span> ReachyMini() <span class="k">as</span> mini:
+<span class="c"># look up and tilt the head</span>
+mini.goto_target(
+    head=create_head_pose(z=<span class="s">10</span>, roll=<span class="s">15</span>,
+                          degrees=<span class="k">True</span>, mm=<span class="k">True</span>),
+    duration=<span class="s">1.0</span>)</pre>
+        </div>
+        <div class="col js" data-only="1">
+            <h3>JavaScript</h3>
+            <p><b>Easy to deploy</b>: apps hosted on Hugging Face Spaces, with remote GPUs, talking to the robot through WebRTC.</p>
+<pre class="code install"><span class="c">$</span> npm install @pollen-robotics/reachy-mini-sdk</pre>
+<pre class="code"><span class="k">import</span> { ReachyMini } <span class="k">from</span> <span class="s">"@pollen-robotics/reachy-mini-sdk"</span>;
+
+<span class="k">const</span> robot = <span class="k">new</span> ReachyMini();
+<span class="k">await</span> robot.connect();
+<span class="k">await</span> robot.startSession(robotId);
+
+robot.setHeadRpyDeg(<span class="s">0</span>, <span class="s">10</span>, <span class="s">-5</span>);
+robot.setAntennasDeg(<span class="s">30</span>, <span class="s">-30</span>);</pre>
+        </div>
+    </div>
+    <div class="chrome reveal" style="--d:6"><span>Reachy Mini · Usage</span><span class="num"></span></div>
+</section>
