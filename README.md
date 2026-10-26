@@ -13,7 +13,8 @@ The slides, layout and code are shared under CC BY 4.0, like Fabien's deck they 
 
 Photos and video clips in `media/` belong to their owners and are only shown to illustrate the talk; they are not
 covered by the licence: Pollen Robotics and Hugging Face (Microduck, Reachy Mini and Reachy 2 clips, community
-photos collected by Fabien Danieau), Chris Paxton (quadruped clip, from his post on X), and press and product photos
+photos collected by Fabien Danieau), Boston Dynamics (Spot clip, from their post on X), Chris Paxton (quadruped clip,
+from his post on X), and press and product photos
 of other robots. The robot models and motion data keep their own licences, listed below.
 
 Fabien's original README follows.
