@@ -1,7 +1,9 @@
 Giving a body to AI: live deck
 ==============================
 
-Run it (no network needed once unzipped):
+Online: https://andimarafioti.github.io/giving-a-body-to-ai/ (Chrome; press F for fullscreen).
+
+Offline, from a copy of this repository (no network needed):
 
     python3 serve.py
 
