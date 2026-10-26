@@ -635,7 +635,7 @@ body.notes-on #notesOverlay { display: block; position: fixed; left: 0; right: 0
 .map-pin.about-pin { opacity: 0; }
 .deck-stage[data-slide="about"] .map-pin.about-pin { opacity: 1; transition-delay: 1.2s; }
 .about.me-about { left: 1180px; width: 620px; top: 140px; }
-.about.me-about h2 { font-size: 88px; }
+.about.me-about h2 { font-size: 150px; line-height: 0.9; margin: 6px 0 0; }
 .about.me-about .kicker { margin-bottom: 4px; }
 .about.me-about .bio .v b { color: var(--hf-yellow); font-weight: 600; }
 .flag-ar { display: inline-block; position: relative; width: 36px; height: 24px; margin-left: 10px; vertical-align: -3px; border-radius: 3px;
