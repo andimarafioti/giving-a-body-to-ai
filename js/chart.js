@@ -2,9 +2,9 @@
 // datasets tagged reachy_mini_community_moves (dated by their dataset's createdAt; the synthetic
 // binhpham/reachy-mini-motion-synth set is left out), and the social-wall posts shown on the wall
 // (pollen-robotics/reachy-mini-social-posts, kept, by created_at), and the conversation app's talk time in days
-// (s2s swarm dashboard, active conversation minutes; its history starts March 2026). Cumulative by month, snapshot 2026-10-22.
+// (s2s swarm dashboard, active conversation minutes; its history starts March 2026). Cumulative by month, snapshot 2026-10-22 (conversation days: hf-voice dashboard, 2026-10-26).
 (() => {
-    const ROWS = [["2025-07", 1, 0, 162, 0], ["2025-08", 1, 85, 178, 0], ["2025-09", 1, 104, 197, 0], ["2025-10", 4, 104, 221, 0], ["2025-11", 7, 104, 248, 0], ["2025-12", 50, 105, 351, 0], ["2026-01", 75, 105, 446, 0], ["2026-02", 124, 132, 520, 0], ["2026-03", 160, 156, 560, 0], ["2026-04", 195, 167, 595, 1], ["2026-05", 323, 180, 723, 162], ["2026-06", 374, 332, 826, 483], ["2026-07", 436, 404, 931, 931], ["2026-08", 488, 411, 1087, 1399], ["2026-09", 543, 413, 1288, 2033], ["2026-10", 578, 423, 1401, 2546]]; // [month, apps, moves, posts, conversation days]
+    const ROWS = [["2025-07", 1, 0, 162, 0], ["2025-08", 1, 85, 178, 0], ["2025-09", 1, 104, 197, 0], ["2025-10", 4, 104, 221, 0], ["2025-11", 7, 104, 248, 0], ["2025-12", 50, 105, 351, 0], ["2026-01", 75, 105, 446, 0], ["2026-02", 124, 132, 520, 0], ["2026-03", 160, 156, 560, 0], ["2026-04", 195, 167, 595, 1], ["2026-05", 323, 180, 723, 162], ["2026-06", 374, 332, 826, 483], ["2026-07", 436, 404, 931, 931], ["2026-08", 488, 411, 1087, 1399], ["2026-09", 543, 413, 1288, 2033], ["2026-10", 578, 423, 1401, 2662]]; // [month, apps, moves, posts, conversation days]
     // Cumulative flow: bands stacked bottom to top, apps, moves, posts, conversation days; the top edge is the total.
     const S = [{ key: 1, name: 'apps', cls: 's1' }, { key: 2, name: 'moves', cls: 's2' }, { key: 3, name: 'posts', cls: 's3' }, { key: 4, name: 'days', cls: 's4' }];
     const svg = document.getElementById('growthChart'), tip = document.getElementById('growthTip');
