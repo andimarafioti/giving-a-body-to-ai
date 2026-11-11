@@ -2,9 +2,15 @@
 // an optional { jointName: angle } map. Returned group is Y-up (MJCF is Z-up).
 // ponytail: hinge joints about the body origin, no default-class inheritance.
 import * as THREE from 'three';
-import { STLLoader } from 'three/addons/loaders/STLLoader.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
+// Three tries, so a network hiccup doesn't lose a robot.
+async function getText(url) {
+    for (let i = 1; ; i++) {
+        try { const r = await fetch(url, { cache: 'no-cache' }); if (!r.ok) throw new Error(`${url}: ${r.status}`); return await r.text(); }
+        catch (e) { if (i >= 3) throw e; await new Promise(ok => setTimeout(ok, 700 * i)); }
+    }
+}
 const nums = (s, d) => (s ? s.trim().split(/\s+/).map(Number) : d);
 const kids = (el, tag) => [...el.children].filter(c => c.tagName === tag);
 
@@ -49,12 +55,28 @@ function creaseNormals(geo, crease = Math.PI / 6) {
     return geo;
 }
 
-// Load each mesh file once; callers clone.
+// Each robot's parts come in one pack, meshes.glb (tools/pack_meshes.mjs): the CAD STLs simplified to
+// 0.05 mm and Draco-compressed, under 1 MB for the five robots instead of about 100 MB of STL. A part is
+// found by its STL path inside the robot folder. The scene hands over its GLB loader (Draco, claude.ai bundles).
+let loadGLB = null;
+export const setPackLoader = fn => { loadGLB = fn; };
+const packs = new Map();
+function partGeometry(url) {
+    const [, dir, file] = url.match(/^(.*\/robots\/[^/]+)\/(.+)$/);
+    if (!packs.has(dir)) packs.set(dir, loadGLB(`${dir}/meshes.glb`).then(gltf => {
+        const byFile = new Map();
+        gltf.scene.traverse(o => { if (o.isMesh) byFile.set(o.userData.file, o.geometry); });
+        return byFile;
+    }));
+    return packs.get(dir).then(byFile => {
+        if (!byFile.has(file)) throw new Error(`${file} is not in ${dir}/meshes.glb`);
+        return byFile.get(file).toNonIndexed(); // triangle soup, as the STL was: creaseNormals expects it
+    });
+}
+// Load each part once; callers clone.
 const cache = new Map();
 function loadMesh(url) {
-    // window.PACKED: the claude.ai version, where the meshes come from base64 bundles (js/packed.js).
-    const load = () => window.PACKED ? import('../js/packed.js').then(m => m.modelBytes(url)).then(b => new STLLoader().parse(b)) : new STLLoader().loadAsync(url);
-    if (!cache.has(url)) cache.set(url, load().then(creaseNormals));
+    if (!cache.has(url)) cache.set(url, partGeometry(url).then(creaseNormals));
     return cache.get(url).then(geo => new THREE.Mesh(geo));
 }
 
@@ -79,7 +101,7 @@ export async function loadParts(dir, parts, scale = 0.001) {
 // keep: mesh names left as their own object (looked up by name later); every other part of a body is
 // merged with the body's other parts of the same look, so a robot is a few draws instead of one per part.
 export async function loadMJCF(url, { meshDir, joints = {}, recolor = () => null, keep = [] } = {}) {
-    const doc = new DOMParser().parseFromString(await (await fetch(url, { cache: 'no-cache' })).text(), 'application/xml');
+    const doc = new DOMParser().parseFromString(await getText(url), 'application/xml');
     const meshes = Object.fromEntries([...doc.querySelectorAll('asset > mesh')].map(m => {
         const file = m.getAttribute('file');
         return [m.getAttribute('name') ?? file.replace(/\.[^.]+$/, ''), file];

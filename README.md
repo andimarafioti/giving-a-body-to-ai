@@ -41,7 +41,9 @@ theme for bright rooms. Everything is local, so it runs without a network.
 - `deck.css`: styles. `js/`: navigation, theme, world map, growth chart and the 3D scene.
 - `assets/`: robot models, clips and media; `assets/vendor/`: three.js r180, the Draco decoder, the fonts.
 
-Binary assets are in Git LFS.
+The robot models are lighter than their sources so the deck loads on phones: the Reachy GLBs are simplified
+(meshoptimizer) and Draco-compressed, and each robot's CAD parts (STL) are simplified to 0.05 mm and packed into one
+Draco GLB, `assets/robots/<robot>/meshes.glb`. Those are modified versions of the models credited below.
 
 ## License
 

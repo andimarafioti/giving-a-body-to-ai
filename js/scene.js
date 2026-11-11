@@ -8,7 +8,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { Reachy, EXPLODE } from '../assets/robot.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { loadMJCF, loadParts, addGrabetteElectronics, poseMJCF } from '../assets/robots.js';
+import { loadMJCF, loadParts, addGrabetteElectronics, poseMJCF, setPackLoader } from '../assets/robots.js';
 
 const W = 1920, H = 1080;
 const ACCENT = new THREE.Color(0xff9d00); // Hugging Face orange
@@ -53,7 +53,16 @@ const SHOTS = {
 /* --- Renderer, lights --- */
 const canvas = document.getElementById('robotCanvas');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5)); // 2 on a HiDPI laptop is 4x the pixels for little visible gain
+// Render at the size the stage is shown, not 1920 x 1080 times the screen density: a phone shows the stage a
+// fraction of that wide. Capped at 1.5 (2 on a HiDPI laptop is 4x the pixels for little visible gain), and at 1
+// on touch screens, whose GPUs are the weakest.
+const MOBILE = matchMedia('(pointer: coarse)').matches;
+const fitRatio = () => Math.min(MOBILE ? 1 : 1.5, Math.max(0.5, devicePixelRatio * Math.min(innerWidth / W, innerHeight / H)));
+renderer.setPixelRatio(fitRatio());
+addEventListener('resize', () => renderer.setPixelRatio(fitRatio()));
+// If the GPU drops the context (a phone under memory pressure), hide the robots and let the slides go on.
+canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); canvas.style.visibility = 'hidden'; });
+canvas.addEventListener('webglcontextrestored', () => { canvas.style.visibility = ''; });
 renderer.setSize(W, H, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -91,7 +100,11 @@ function makeShadow() {
 const Draco = window.DRACO_INLINE ? (await import('./draco-inline.js')).InlineDRACOLoader : DRACOLoader;
 const loader = new GLTFLoader().setDRACOLoader(new Draco().setDecoderPath('assets/vendor/draco/'));
 // window.PACKED: the claude.ai version, where the models come from base64 bundles (js/packed.js).
-const loadGLB = async url => window.PACKED ? loader.parseAsync(await (await import('./packed.js')).modelBytes(url), '') : loader.loadAsync(url);
+// A flaky network shouldn't leave the robots out: every model and clip gets three tries.
+const retry = async (load, tries = 3) => { for (let i = 1; ; i++) { try { return await load(); } catch (e) { if (i >= tries) throw e; await new Promise(ok => setTimeout(ok, 700 * i)); } } };
+const getJSON = url => retry(() => fetch(url, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(`${url}: ${r.status}`); return r.json(); }));
+const loadGLB = url => retry(async () => window.PACKED ? loader.parseAsync(await (await import('./packed.js')).modelBytes(url), '') : loader.loadAsync(url));
+setPackLoader(loadGLB); // the robots' part packs are GLBs too
 const gltf = await loadGLB('assets/reachy_mini_viz.glb');
 // Tighter stack than the trailer's, so the head reads large on one slide.
 for (const [id, l] of Object.entries(EXPLODE)) {
@@ -272,7 +285,7 @@ scene.add(family);
     const famKey = new THREE.DirectionalLight(0xfff1e0, 1.8);
     famKey.position.set(1.4, 2.4, 2.2);
     famKey.castShadow = true;
-    famKey.shadow.mapSize.set(2048, 2048);
+    famKey.shadow.mapSize.setScalar(MOBILE ? 1024 : 2048);
     Object.assign(famKey.shadow.camera, { left: -1.6, right: 1.6, top: 1.6, bottom: -1.6, near: 0.5, far: 8 });
     famKey.shadow.bias = -0.0004;
     famKey.shadow.radius = 4;
@@ -287,7 +300,7 @@ scene.add(family);
 const R = 'assets/robots';
 // Microduck's clip (shot-tools/mjcf_clip.py duck): it sits in the wide shot, so it is needed
 // before the robots are placed on the table.
-const duckClip = await fetch(`${R}/duck/clip.json`, { cache: 'no-cache' }).then(r => r.json());
+const duckClip = await getJSON(`${R}/duck/clip.json`);
 // Blender exports face +Z; stand() expects the URDF/MJCF +X forward.
 // Glossy black glass, the look of every Reachy's eyes.
 const EYE_GLASS = new THREE.MeshPhysicalMaterial({ color: 0x040405, roughness: 0.05, clearcoat: 1, clearcoatRoughness: 0.03 });
@@ -499,7 +512,7 @@ const DUR = 1.8;
 // Recorded moves (shot-tools/bake_moves.py): played in a loop on the moves slide, blended in and
 // out with the slide (MOVE_IN) and between moves (MOVE_X). Frames: [x y z qx qy qz qw antR antL yaw].
 const MOVE_IN = 0.7, MOVE_X = 0.35;
-const { moves } = await fetch('assets/moves.json', { cache: 'no-cache' }).then(r => r.json());
+const { moves } = await getJSON('assets/moves.json');
 const moveList = document.getElementById('moveList');
 moveList.innerHTML = ['emotion', 'dance'].map(k => `<div><h4>${k}s</h4>${moves.map((m, i) => m.kind === k ? `<div class="mv" data-i="${i}">${m.name.replace(/\d+$/, '').replace(/_/g, ' ')}</div>` : '').join('')}</div>`).join('');
 const moveEls = [...moveList.querySelectorAll('.mv')];
@@ -543,7 +556,7 @@ const moveUpdate = (dt, on) => {
 // robot, which turns to the sound (direction of arrival, a cone on the floor). Step 1: it walks an
 // arc in front and back, the robot follows it and a detection box tracks it (face tracking).
 // Walk clip: shot-tools/mjcf_clip.py duck_walk; the duck moves at its baked speed, so feet don't slide.
-const walkClip = await fetch(`${R}/duck/clip_walk.json`, { cache: 'no-cache' }).then(r => r.json());
+const walkClip = await getJSON(`${R}/duck/clip_walk.json`);
 const scout = await loadMJCF(`${R}/duck/robot.xml`, DUCK_OPTS);
 const scoutJaw = hingeBeak(scout);
 const scoutRig = new THREE.Group();
@@ -733,7 +746,7 @@ r2grasp.clampWhenFinished = true;
 // robots: the Amazing Hands count on their fingers (step 2); the Gripette sways and opens and
 // closes its jaws while the Grabette's jaw does the same (step 3). Leaving a step lets the
 // cycle finish. The Microduck (step 4) has its own state machine, below.
-const [handClip, handLeftClip, gripetteClip] = await Promise.all([`${R}/hand/clip.json`, `${R}/hand_left/clip.json`, `${R}/gripette/clip.json`].map(u => fetch(u, { cache: 'no-cache' }).then(r => r.json())));
+const [handClip, handLeftClip, gripetteClip] = await Promise.all([`${R}/hand/clip.json`, `${R}/hand_left/clip.json`, `${R}/gripette/clip.json`].map(getJSON));
 const handAnim = { playing: false, t: 0, loop: false, step: 2 };
 const gripAnim = { playing: false, t: 0, loop: false, step: 3 };
 // Microduck: zooming in plays "up" (stands, opens its beak twice) then loops "idle" (looks

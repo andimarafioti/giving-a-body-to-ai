@@ -661,3 +661,9 @@ body.notes-on #notesOverlay { display: block; position: fixed; left: 0; right: 0
 .s2s-note { position: absolute; left: var(--pad); top: 830px; width: 1130px; font-size: 28px; line-height: 1.45; font-weight: 300; color: rgba(var(--paper-rgb), 0.85); }
 .s2s-note b { font-weight: 600; color: var(--paper); }
 .serve-stats.s2s-stats { top: 330px; }
+/* Phones: taps navigate (js/deck.js), so no double-tap zoom delay; held upright, a hint to turn sideways */
+.deck-viewport { touch-action: manipulation; }
+#rotateHint { display: none; }
+@media (orientation: portrait) and (pointer: coarse) {
+    #rotateHint { display: block; position: fixed; left: 16px; right: 16px; bottom: calc(24px + env(safe-area-inset-bottom)); text-align: center; font: 500 13px/1.5 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); pointer-events: none; }
+}

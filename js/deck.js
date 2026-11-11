@@ -5,7 +5,9 @@
 // - Keynote mode (K, or ?talk=keynote) skips slides marked data-keynote="cut".
 // - Speaker notes (N): <aside class="notes"> in each slide, in a second window, or over the slide if the
 //   browser refuses the window.
-// - Videos play only while their slide is shown; <video data-click> starts with sound on a click.
+// - Videos play only while their slide is shown, and load only when it is next (data-autoplay, preload="none");
+//   <video data-click> starts with sound on a click.
+// - Touch: swipe, or tap the right two thirds to go on and the left third to go back.
 class SlidePresentation {
     constructor() {
         this.slides = [...document.querySelectorAll('.slide')];
@@ -23,14 +25,17 @@ class SlidePresentation {
             this.lock = Date.now() + 900;
             this.next(Math.sign(e.deltaY));
         }, { passive: true });
-        let x0 = null;
-        addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+        let t0 = null;
+        addEventListener('touchstart', e => { const t = e.touches[0]; t0 = e.touches.length === 1 ? [t.clientX, t.clientY] : null; }, { passive: true });
         addEventListener('touchend', e => {
-            if (x0 === null) return;
-            const dx = e.changedTouches[0].clientX - x0;
-            if (Math.abs(dx) > 50) this.next(-Math.sign(dx));
-            x0 = null;
+            if (!t0) return;
+            const t = e.changedTouches[0], dx = t.clientX - t0[0], dy = t.clientY - t0[1];
+            t0 = null;
+            if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) this.next(-Math.sign(dx));
+            else if (Math.hypot(dx, dy) < 12 && !e.target.closest('a, button, video[data-click]')) this.next(t.clientX > innerWidth / 3 ? 1 : -1);
         });
+        // A phone held upright shows the 16:9 stage as a thin band (deck.css shows this in portrait only).
+        document.body.append(Object.assign(document.createElement('div'), { id: 'rotateHint', textContent: 'Turn your phone sideways · tap right to go on, left to go back' }));
         for (const v of document.querySelectorAll('video[data-click]')) {
             v.addEventListener('click', e => { e.stopPropagation(); v.muted = false; v.paused ? v.play().catch(() => {}) : v.pause(); });
         }
@@ -85,10 +90,16 @@ class SlidePresentation {
         this.step = atEnd ? this.steps(this.current) : 0;
         this.slides.forEach((s, j) => { s.classList.toggle('active', j === this.current); s.classList.toggle('visible', j === this.current); });
         document.getElementById('progress').style.width = `${((this.current + 1) / this.slides.length) * 100}%`;
+        const next = this.slides[this.current + 1];
         for (const v of document.querySelectorAll('.slide video')) {
-            const here = v.closest('.slide') === this.slides[this.current];
-            if (here && v.hasAttribute('autoplay')) { v.currentTime = 0; v.play().catch(() => {}); }
-            else if (!here) { v.pause(); if (v.hasAttribute('data-click')) { v.currentTime = 0; v.muted = true; } }
+            const slide = v.closest('.slide');
+            if (slide === this.slides[this.current]) {
+                if (v.hasAttribute('data-autoplay')) { v.preload = 'auto'; v.currentTime = 0; v.play().catch(() => {}); }
+            } else {
+                v.pause();
+                if (v.hasAttribute('data-click')) { v.currentTime = 0; v.muted = true; }
+                if (slide === next && v.preload === 'none') { v.preload = 'auto'; v.load(); } // ready when we get there
+            }
         }
         this.emit();
     }
