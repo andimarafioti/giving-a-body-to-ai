@@ -242,10 +242,12 @@ const stopPreview = (() => {
             canvas.style.opacity = s.dim;
             renderer.render(scene, camera);
         } else canvas.style.opacity = 0;
+        // A slide whose robots are still loading says so, rather than looking stuck (deck.css).
+        stage.classList.toggle('scene-loading', !!s && s.set !== 'studio' && s.set !== 'none');
         requestAnimationFrame(loop);
     };
     requestAnimationFrame(loop);
-    return () => { on = false; };
+    return () => { on = false; stage.classList.remove('scene-loading'); };
 })();
 
 /* --- Part labels for the exploded view --- */
@@ -919,6 +921,13 @@ for (const g of [family, scoutRig]) {
     const update = g.updateMatrixWorld;
     g.updateMatrixWorld = function (force) { if (this.visible) update.call(this, force); };
 }
+
+/* --- Shaders, compiled before they're needed --- */
+// three compiles a material's shader the first time it draws it under a given set of lights and transparency.
+// The first visit to the family slide drew every material in two new states at once (studio and family lights
+// together while the fade runs, then family lights alone), which froze the page for seconds on arrival. Compile
+// all three states here, while the opening slides are up, and end back in the studio state the cover uses.
+for (const f of [0.75, 1, 0]) { applyFam(f); renderer.compile(scene, camera); }
 
 /* --- Frame loop --- */
 const euler = new THREE.Euler();

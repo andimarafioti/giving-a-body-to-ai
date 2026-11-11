@@ -667,3 +667,6 @@ body.notes-on #notesOverlay { display: block; position: fixed; left: 0; right: 0
 @media (orientation: portrait) and (pointer: coarse) {
     #rotateHint { display: block; position: fixed; left: 16px; right: 16px; bottom: calc(24px + env(safe-area-inset-bottom)); text-align: center; font: 500 13px/1.5 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); pointer-events: none; }
 }
+/* A 3D slide reached before its robots have loaded (js/scene.js): say so instead of looking stuck */
+.deck-stage.scene-loading::after { content: 'Loading the robots…'; position: absolute; top: 44px; right: var(--pad); z-index: 5; font: 500 18px/1 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); animation: sceneLoading 1.1s ease-in-out infinite alternate; }
+@keyframes sceneLoading { from { opacity: 0.3; } to { opacity: 1; } }
