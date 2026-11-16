@@ -1075,6 +1075,10 @@ function frame(ms) {
     requestAnimationFrame(frame);
 }
 stopPreview();
-canvas.style.opacity = from.dim; // the preview hid it on slides it can't show
+// Start from the slide the deck is on now: the shot above was taken mid-load, and a slide change made
+// before the slidechange listener was in place would otherwise leave the robot where the old slide had it.
+from = to = shotFor(deckState()); t0 = 0;
+applySet(to.set); applyFocus(deckState());
+canvas.style.opacity = to.dim; // the preview hid it on slides it can't show
 requestAnimationFrame(frame);
 window.__ready = true;
